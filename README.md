@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-```
+```ruby
 api = BibSonomy::API.new('yourusername', 'yourapikey')
 posts = api.find('jaeschke', 20)
 ```
