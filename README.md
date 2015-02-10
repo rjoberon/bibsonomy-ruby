@@ -1,4 +1,4 @@
-# BibcsOnomy
+# BibSonomy
 
 BibSonomy client for Ruby
 
