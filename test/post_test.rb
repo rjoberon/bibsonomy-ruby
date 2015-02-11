@@ -3,7 +3,7 @@ require './test/test_helper'
 class BibSonomyPostTest < Minitest::Unit::TestCase
 
   def setup
-    @api = BibSonomy::API.new(ENV['USER_NAME'], ENV['API_KEY'])
+    @api = BibSonomy::API.new(ENV['USER_NAME'], ENV['API_KEY'], 'ruby')
   end
   
   def test_exists
@@ -26,7 +26,7 @@ class BibSonomyPostTest < Minitest::Unit::TestCase
 
   def test_find_posts
     VCR.use_cassette('all_posts') do
-      result = @api.all("jaeschke", 20)
+      result = @api.all("jaeschke", nil, 20)
       
       # Make sure we got all the posts
       assert_equal 20, result.length
