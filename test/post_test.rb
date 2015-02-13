@@ -13,7 +13,7 @@ class BibSonomyPostTest < Minitest::Unit::TestCase
   
   def test_find_post
     VCR.use_cassette('one_post') do
-      post = @api.find("jaeschke", "c9437d5ec56ba949f533aeec00f571e3")
+      post = @api.get_post("jaeschke", "c9437d5ec56ba949f533aeec00f571e3")
       assert_equal BibSonomy::Post, post.class
       
       # Check that the fields are accessible by our model
@@ -26,7 +26,7 @@ class BibSonomyPostTest < Minitest::Unit::TestCase
 
   def test_find_posts
     VCR.use_cassette('all_posts') do
-      result = @api.all("jaeschke", nil, 20)
+      result = @api.get_posts_for_user("jaeschke", "publication", nil, 0, 20)
       
       # Make sure we got all the posts
       assert_equal 20, result.length
