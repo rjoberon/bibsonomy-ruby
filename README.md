@@ -21,8 +21,8 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-api = BibSonomy::API.new('yourusername', 'yourapikey')
-posts = api.find('jaeschke', 20)
+api = BibSonomy::API.new('yourusername', 'yourapikey', 'ruby')
+posts = api.get_posts_for_user('jaeschke', "publication", ["myown"], 0, 20)
 ```
 
 ## Contributing
