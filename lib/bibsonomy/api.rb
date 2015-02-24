@@ -69,7 +69,7 @@ module BibSonomy
     # @return [BibSonomy::Post] the requested post
     #
     def get_post(user_name, intra_hash)
-      response = @conn.get "/api/users/#{user_name}/posts/#{intra_hash}" , { :format => @format }
+      response = @conn.get "/api/users/" + CGI.escape(user_name) + "/posts/" + CGI.escape(intra_hash), { :format => @format }
 
       if @parse
         attributes = JSON.parse(response.body)
@@ -96,7 +96,7 @@ module BibSonomy
       if tags != nil
         params[:tags] = tags.join(" ")
       end
-      response = @conn.get "/api/users/#{user_name}/posts", params
+      response = @conn.get "/api/users/" + CGI.escape(user_name) + "/posts", params
 
       if @parse
         posts = JSON.parse(response.body)["posts"]["post"]
@@ -105,25 +105,27 @@ module BibSonomy
       return response.body
     end
 
+    def get_document_href(user_name, intra_hash, file_name)
+      return "/api/users/" + CGI.escape(user_name) + "/posts/" + CGI.escape(intra_hash) + "/documents/" + CGI.escape(file_name)
+    end
+
     #
     # get a document belonging to a post
     #
-    def get_document(document_href)
-      response = @conn.get document_href
+    def get_document(user_name, intra_hash, file_name)
+      response = @conn.get get_document_href(user_name, intra_hash, file_name)
       if response.status == 200
         return [response.body, response.headers['content-type']]
       end
-      return nil
+      return nil, nil
     end
 
-
-    def get_document_preview(document, size)
-      params = { :preview => size }
-      response = @conn.get document_href, params
+    def get_document_preview(user_name, intra_hash, file_name, size)
+      response = get_document_href(user_name, intra_hash, file_name), { :preview => size }
       if response.status = 200
         return [response.body, 'image/jpeg']
       end
-      return nil
+      return nil, nil
     end
 
     #
