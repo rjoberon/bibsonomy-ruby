@@ -37,6 +37,12 @@ html = csl.render('jaeschke', ['myown'], 100, 'apa.csl')
 print html
 ```
 
+A command line wrapper to the CSL renderer:
+```ruby
+#!/usr/bin/ruby
+require 'bibsonomy/csl'
+print BibSonomy::main(ARGV)
+```
 
 ## Contributing
 
