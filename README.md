@@ -20,10 +20,23 @@ Or install it yourself as:
 
 ## Usage
 
+Getting posts from BibSonomy:
+
 ```ruby
+require 'bibsonomy'
 api = BibSonomy::API.new('yourusername', 'yourapikey', 'ruby')
-posts = api.get_posts_for_user('jaeschke', "publication", ["myown"], 0, 20)
+posts = api.get_posts_for_user('jaeschke', 'publication', ['myown'], 0, 20)
 ```
+
+Rendering posts with CSL:
+
+```ruby
+require 'bibsonomy/csl'
+csl = BibSonomy::CSL.new('yourusername', 'yourapikey', nil)
+html = csl.render('jaeschke', ['myown'], 100, 'apa.csl')
+print html
+```
+
 
 ## Contributing
 
