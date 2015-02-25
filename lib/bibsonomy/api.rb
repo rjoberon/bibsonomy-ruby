@@ -91,7 +91,7 @@ module BibSonomy
     def get_posts_for_user(user_name, resource_type, tags = nil, start = 0, endc = $MAX_POSTS_PER_REQUEST)
       params = {
         :format => @format,
-        :resourcetype => self.get_resource_type(resource_type),
+        :resourcetype => get_resource_type(resource_type),
         :start => start,
         :end => endc
       }
