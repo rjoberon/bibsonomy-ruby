@@ -2,6 +2,8 @@
 
 BibSonomy client for Ruby
 
+[![Gem Version](https://badge.fury.io/rb/bibsonomy.svg)](http://badge.fury.io/rb/bibsonomy)
+
 ## Installation
 
 Add this line to your application's Gemfile:

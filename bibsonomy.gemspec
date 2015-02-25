@@ -28,6 +28,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "json", "~> 1.8"
   spec.add_dependency "citeproc", "~> 1.0"
   spec.add_dependency "csl-styles", "~> 1.0"
-  spec.add_dependency "bibtex-ruby", "~> 4.0"
   
 end

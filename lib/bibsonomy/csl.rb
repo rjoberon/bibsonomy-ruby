@@ -3,7 +3,6 @@
 require 'optparse'
 require 'citeproc'
 require 'csl/styles'
-require 'bibtex'
 require 'json'
 require 'bibsonomy'
 
@@ -35,6 +34,8 @@ require 'bibsonomy'
 module BibSonomy
   class CSL
 
+    attr_accessor :style, :pdf_dir, :css_class, :year_headings, :public_doc_prefix, :doi_link, :url_link, :bibtex_link, :bibsonomy_link, :opt_sep
+    
     #
     # Create a new BibSonomy instance
     # Params:
@@ -88,7 +89,7 @@ module BibSonomy
         result += "<h3>" + last_year + "</h3>"
       end
 
-      result += "<ul class='#{@publications}'>\n"
+      result += "<ul class='#{@css_class}'>\n"
       for post_id in sorted_keys
         post = posts[post_id]
 
@@ -97,7 +98,7 @@ module BibSonomy
           year = get_year(post)
           if year != last_year
             last_year = year
-            result += "</ul>\n<h3>" + last_year + "</h3>\n<ul class='#{@publications}'>\n"
+            result += "</ul>\n<h3>" + last_year + "</h3>\n<ul class='#{@css_class}'>\n"
           end
         end
 
@@ -382,8 +383,8 @@ module BibSonomy
     # do the actual work
     #
     csl = BibSonomy::CSL.new(options[:user_name], options[:api_key])
-    csl.pdf_dir(options[:directory])
-    csl.style(options[:style])
+    csl.pdf_dir = options[:directory]
+    csl.style = options[:style]
 
     html = csl.render(options[:user], options[:tags], options[:posts])
 
