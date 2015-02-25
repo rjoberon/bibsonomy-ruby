@@ -2,11 +2,6 @@
 require 'faraday'
 require 'json'
 
-#
-# TODO:
-# - error handling
-# - getting more than 1000 posts
-#
 
 # configuration options
 $API_URL = "https://www.bibsonomy.org/"
@@ -21,17 +16,18 @@ $resource_types_bibtex = ['bibtex', 'pub', 'publication', 'publications', 'publ'
 #
 # The BibSonomy REST client for Ruby.
 #
+# @todo error handling
+# @todo getting more than 1000 posts
+#
+# @author Robert Jäschke
+# 
 module BibSonomy
   class API
 
     # Initializes the client with the given credentials.
     #
-    # @param user_name [String] The name of the user account used for
-    # accessing the API
-    #
-    # @param api_key [String] The API key corresponding to the user
-    # account - can be obtained from
-    # http://www.bibsonomy.org/settings?selTab=1
+    # @param user_name [String] the name of the user account used for accessing the API
+    # @param api_key [String] the API key corresponding to the user account - can be obtained from http://www.bibsonomy.org/settings?selTab=1
     #
     # @param format [String] The requested return format. One of:
     # 'xml', 'json', 'ruby', 'csl', 'bibtex'. The default is 'ruby'
@@ -64,11 +60,9 @@ module BibSonomy
     #
     # Get a single post
     #
-    # Params:
-    # +user_name+:: [String] The name of the post's owner.
-    # +intra_hash+:: [String] The intrag hash of the post.
-    # +return+:: [BibSonomy::Post] the requested post
-    #
+    # @param user_name [String] the name of the post's owner
+    # @param intra_hash [String] the intrag hash of the post
+    # @return [BibSonomy::Post, String] the requested post
     def get_post(user_name, intra_hash)
       response = @conn.get "/api/users/" + CGI.escape(user_name) + "/posts/" + CGI.escape(intra_hash), { :format => @format }
 
@@ -82,12 +76,12 @@ module BibSonomy
     #
     # Get posts owned by a user, optionally filtered by tags.
     #
-    # Params:
-    # +user_name+:: [String] The name of the posts' owner.
-    # +resource_type+:: [String] The type of the post. Currently supported are 'bookmark' and 'publication'.
-    # +tags+::
-    # +start+::
-    # +endc+::
+    # @param user_name [String] the name of the posts' owner
+    # @param resource_type [String] the type of the post. Currently supported are 'bookmark' and 'publication'.
+    # @param tags [Array<String>] the tags that all posts must contain (can be empty)
+    # @param start [Integer] number of first post to download
+    # @param endc [Integer] number of last post to download
+    # @return [Array<BibSonomy::Post>, String] the requested posts
     def get_posts_for_user(user_name, resource_type, tags = nil, start = 0, endc = $MAX_POSTS_PER_REQUEST)
       params = {
         :format => @format,
@@ -115,10 +109,10 @@ module BibSonomy
     #
     # Get a document belonging to a post.
     #
-    # Params:
-    # +user_name+::
-    # +intra_hash+::
-    # +file_name+::
+    # @param user_name
+    # @param intra_hash
+    # @param file_name
+    # @return the document and the content type
     def get_document(user_name, intra_hash, file_name)
       response = @conn.get get_document_href(user_name, intra_hash, file_name)
       if response.status == 200
@@ -130,11 +124,11 @@ module BibSonomy
     #
     # Get the preview for a document belonging to a post.
     #
-    # Params:
-    # +user_name+::
-    # +intra_hash+::
-    # +file_name+::
-    # +size+::
+    # @param user_name
+    # @param intra_hash
+    # @param file_name
+    # @param size
+    # @return the preview image and the content type `image/jpeg`
     def get_document_preview(user_name, intra_hash, file_name, size)
       response = get_document_href(user_name, intra_hash, file_name), { :preview => size }
       if response.status = 200

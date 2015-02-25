@@ -23,64 +23,56 @@ require 'bibsonomy'
 # 2015-02-24
 # - initial version
 #
-# TODO:
-# - escape data
-# - make sorting, etc. configurable
-# - automatically rename files (TODO: CSL lacks BibTeX key)
-# - add intra_hash, user_name, etc. to CSL (cf. https://bitbucket.org/bibsonomy/bibsonomy/issue/2411/)
-# - integrate AJAX abstract
-# - make all options available via command line
+# @todo escape data
+# @todo make sorting, etc. configurable
+# @todo automatically rename files (TODO: CSL lacks BibTeX key)
+# @todo add intra_hash, user_name, etc. to CSL (cf. https://bitbucket.org/bibsonomy/bibsonomy/issue/2411/)
+# @todo integrate AJAX abstract
+# @todo make all options available via command line
+#
+# @author Robert Jäschke
 
 module BibSonomy
   class CSL
-    ##
-    # :attr_accessor: pdf_dir
-    # The output directory for downloaded PDF files. If set to +nil+, no documents are downloaded. (default: +nil+)
-
-    ##
-    # :attr_accessor: style
-    # The CSL[http://citationstyles.org/] style used for rendering. (default: +apa.csl+)
-
-    ##
-    # :attr_accessor: year_headings
-    # A boolean indicating whether year headings shall be rendered. (default: enabled)
-
-    ##
-    # :attr_accessor: css_class
-    # The CSS class used to render the surrounding +<ul>+ list (default: 'publications')
-
-    ##
-    # :attr_accessor: doi_link
-    # A boolean indicating whether links for DOIs shall be rendered. (default: true)
-
-    ##
-    # :attr_accessor: url_link
-    # A boolean indicating whether URLs of posts shall be rendered. (default: true)
-
-    ##
-    # :attr_accessor: bibtex_link
-    # A boolean indicating whether links to the BibTeX data of a post (in BibSonomy) shall be rendered. (default: true)
-
-    ##
-    # :attr_accessor: bibsonomy_link
-    # A boolean indicating whether links  BibSonomy shall be rendered. (default: true)
     
-    ##
-    # :attr_accessor: opt_sep
-    # The separator between options. (default: ' | ')
+    # @return [String] the output directory for downloaded PDF files. If set to `nil`, no documents are downloaded. (default: `nil`)
+    attr_accessor :pdf_dir
 
-    ##
-    # :attr_accessor: public_doc_postfix
-    # When a post has several documents and the filename of one of them ends with +public_doc_postfix+, only this document is downloaded and linked, all other are ignored. (default: '_oa.pdf')
+    # @return [String] the {http://citationstyles.org/ CSL} style used for rendering. (default: `apa.csl`)
+    attr_accessor :style
 
-    # publicly accessible attributes
-    attr_accessor :style, :pdf_dir, :css_class, :year_headings, :public_doc_postfix, :doi_link, :url_link, :bibtex_link, :bibsonomy_link, :opt_sep
+    # @return [Boolean] whether year headings shall be rendered. (default: `true`)
+    attr_accessor :year_headings
+
+    # @return [String] the CSS class used to render the surrounding `<ul>` list (default: 'publications')
+    attr_accessor :css_class
+
+    # @return [Boolean] whether links for DOIs shall be rendered. (default: `true`)
+    attr_accessor :doi_link
+
+    # @return [Boolean] whether URLs of posts shall be rendered. (default: `true`)
+    attr_accessor :url_link
+    
+    # @return [Boolean] whether links to the BibTeX data of a post (in BibSonomy) shall be rendered. (default: `true`)
+    attr_accessor :bibtex_link
+
+    # @return [Boolean] whether links to BibSonomy shall be rendered. (default: `true`)
+    attr_accessor :bibsonomy_link
+
+    # @return [String] the separator between options. (default: ' | ')
+    attr_accessor :opt_sep
+
+    # @return [String] When a post has several documents and the
+    # filename of one of them ends with `public_doc_postfix`, only
+    # this document is downloaded and linked, all other are
+    # ignored. (default: '_oa.pdf')
+    attr_accessor :public_doc_postfix
 
     #
-    # Create a new BibSonomy instance
-    # Params:
-    # +user_name+:: BibSonomy user name
-    # +api_key+:: API key of the given user (get at http://www.bibsonomy.org/settings?selTab=1)
+    # Create a new BibSonomy instance.
+    #
+    # @param user_name [String] the BibSonomy user name
+    # @param api_key [String] the API key of the user (get at http://www.bibsonomy.org/settings?selTab=1)
     def initialize(user_name, api_key)
       super()
       @bibsonomy = BibSonomy::API.new(user_name, api_key, 'csl')
@@ -100,11 +92,12 @@ module BibSonomy
     end
 
     #
-    # Download +count+ posts for the given +user+ and +tag(s)+ and render them with CSL.
-    # Params:
-    # +user+:: user name
-    # +tags+:: an array of tags
-    # +count+:: number of posts to download
+    # Download `count` posts for the given `user` and `tag(s)` and render them with {http://citationstyles.org/ CSL}.
+    #
+    # @param user [String] the name of the posts' owner
+    # @param tags [Array<String>] the tags that all posts must contain (can be empty)
+    # @param count [Integer] number of posts to download
+    # @return [String] the rendered posts as HTML
     def render(user, tags, count)
       # get posts from BibSonomy
       posts = JSON.parse(@bibsonomy.get_posts_for_user(user, 'publication', tags, 0, count))
@@ -270,7 +263,10 @@ module BibSonomy
   end
 
 
-  # parse command line options
+  # Parse command line options
+  #
+  # @param args [Array<String>] command line options
+  # @return [String] the rendered posts as HTML
   def self.main(args)
 
     # setting default options
