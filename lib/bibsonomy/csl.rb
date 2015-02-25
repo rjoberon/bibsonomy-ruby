@@ -19,7 +19,7 @@ require 'bibsonomy'
 # - number of posts
 # - style
 # - directory
-# 
+#
 # Changes:
 # 2015-02-24
 # - initial version
@@ -27,30 +27,49 @@ require 'bibsonomy'
 # TODO:
 # - escape data
 # - make sorting, etc. configurable
-# - add link to BibSonomy
 # - automatically rename files (TODO: CSL lacks BibTeX key)
-# - add intra_hash, user_name, DOI to CSL
-# - add CSL to BibSonomy API
-# - extract core into separate (standalone) module
-# - integrate command line parsing
+# - add intra_hash, user_name, etc. to CSL (cf. https://bitbucket.org/bibsonomy/bibsonomy/issue/2411/)
 # - integrate AJAX abstract
-
+# - make all options available via command line
 
 module BibSonomy
   class CSL
 
-    def initialize(user_name, api_key, pdf_dir)
+    #
+    # Create a new BibSonomy instance
+    # Params:
+    # +user_name+:: BibSonomy user name
+    # +api_key+:: API key of the given user (get at http://www.bibsonomy.org/settings?selTab=1)
+    def initialize(user_name, api_key)
       super()
       @bibsonomy = BibSonomy::API.new(user_name, api_key, 'csl')
-      @pdf_dir = pdf_dir
+      # setting some defaults
+      @style = 'apa.csl'
+      @pdf_dir = nil
+      @css_class = 'publications'
+      @year_headings = true
+      @public_doc_postfix = '_oa.pdf'
+
+      # optional parts to be rendered (or not)
+      @doi_link = true
+      @url_link = true
+      @bibtex_link = true
+      @bibsonomy_link = true
+      @opt_sep = ' | '
     end
 
-    def render(user, tag, count, style)
+    #
+    # Download +count+ posts for the given +user+ and +tag(s)+ and render them with CSL.
+    # Params:
+    # +user+:: user name
+    # +tags+:: an array of tags
+    # +count+:: number of posts to download
+    def render(user, tags, count)
       # get posts from BibSonomy
-      posts = JSON.parse(@bibsonomy.get_posts_for_user(user, "publication", [tag], 0, count))
+      posts = JSON.parse(@bibsonomy.get_posts_for_user(user, 'publication', tags, 0, count))
 
       # render them with citeproc
-      cp = CiteProc::Processor.new style: style, format: 'html'
+      cp = CiteProc::Processor.new style: @style, format: 'html'
       cp.import posts
 
       # to check for duplicate file names
@@ -64,48 +83,65 @@ module BibSonomy
       # print first heading
       last_year = 0
 
-      if sorted_keys.length > 0
+      if @year_headings and sorted_keys.length > 0
         last_year = get_year(posts[sorted_keys[0]])
         result += "<h3>" + last_year + "</h3>"
       end
 
-      result += "<ul class='publications'>\n"
+      result += "<ul class='#{@publications}'>\n"
       for post_id in sorted_keys
         post = posts[post_id]
+
         # print heading
-        year = get_year(post)
-        if year != last_year
-          last_year = year
-          result += "</ul>\n<h3>" + last_year + "</h3>\n<ul class='publications'>\n"
+        if @year_headings
+          year = get_year(post)
+          if year != last_year
+            last_year = year
+            result += "</ul>\n<h3>" + last_year + "</h3>\n<ul class='#{@publications}'>\n"
+          end
         end
 
         # render metadata
         csl = cp.render(:bibliography, id: post_id)
-        result += "<li class='" + post["type"] + "'>#{csl[0]} <span class='opt'>["
+        result += "<li class='" + post["type"] + "'>#{csl[0]}"
+
         # extract the post's id
         intra_hash, user_name = get_intra_hash(post_id)
+
+        # optional parts
+        options = []
         # attach documents
         if @pdf_dir
           for doc in get_public_docs(post["documents"])
             # fileHash, fileName, md5hash, userName
             file_path = get_document(@bibsonomy, intra_hash, user_name, doc, @pdf_dir, file_names)
-            result += "<a href='#{file_path}'>PDF</a> | "
+            options << "<a href='#{file_path}'>PDF</a>"
           end
         end
         # attach DOI
         doi = post["DOI"]
-        if doi != ""
-          result += "DOI:<a href='http://dx.doi.org/#{doi}'>#{doi}</a> | "
+        if @doi_link and doi != ""
+          options << "DOI:<a href='http://dx.doi.org/#{doi}'>#{doi}</a>"
         end
         # attach URL
         url = post["URL"]
-        if url != ""
-          result += "<a href='#{url}'>URL</a> | "
+        if @url_link and url != ""
+          options << "<a href='#{url}'>URL</a>"
         end
         # attach BibTeX
-        result += "<a href='http://www.bibsonomy.org/bib/publication/#{intra_hash}/#{user_name}'>BibTeX</a> | "
+        if @bibtex_link
+          options << "<a href='http://www.bibsonomy.org/bib/publication/#{intra_hash}/#{user_name}'>BibTeX</a>"
+        end
         # attach link to BibSonomy
-        result += "<a href='http://www.bibsonomy.org/publication/#{intra_hash}/#{user_name}'>BibSonomy</a>]</span>"
+        if @bibsonomy_link
+          options << "<a href='http://www.bibsonomy.org/publication/#{intra_hash}/#{user_name}'>BibSonomy</a>"
+        end
+
+        # attach options
+        if options.length > 0
+          result += " <span class='opt'>[" + options.join(@opt_sep) + "]</span>"
+        end
+
         result += "</li>\n"
       end
       result += "</ul>\n"
@@ -137,9 +173,9 @@ module BibSonomy
       for doc in documents
         file_name = doc["fileName"]
         if file_name.end_with? ".pdf"
-                              if documents.length < 2 or file_name.end_with? "_oa.pdf"
-                                                                            result << doc
-                              end
+          if documents.length < 2 or file_name.end_with? @public_doc_postfix
+            result << doc
+          end
         end
       end
       return result
@@ -155,9 +191,9 @@ module BibSonomy
     def get_document(bib, intra_hash, user_name, doc, dir, file_names)
       # fileHash, fileName, md5hash, userName
       file_name = doc["fileName"]
-      # strip "_oa"
-      if file_name.end_with? "_oa.pdf"
-                           file_name = file_name[0, file_name.length - "_oa.pdf".length] + ".pdf"
+      # strip doc prefix for public documents
+      if file_name.end_with? @public_doc_postfix
+        file_name = file_name[0, file_name.length - @public_doc_postfix.length] + ".pdf"
       end
       # check for possible duplicate file names
       if file_names.include? file_name
@@ -183,6 +219,94 @@ module BibSonomy
     def get_intra_hash(post_id)
       return [post_id[0, 32], post_id[32, post_id.length]]
     end
+
+    #
+    # setters
+    #
+
+    #
+    # Set the output directory for downloaded PDF files (default: +nil+)
+    # Params:
+    # +pdf_dir+:: directory for downloaded PDF files. If set to +nil+, no documents are downloaded.
+    def pdf_dir=(pdf_dir)
+      @pdf_dir = pdf_dir
+    end
+
+    #
+    # Set the CSL style used for rendering (default: +apa.csl+)
+    # Params:
+    # +style+:: CSL style used for rendering
+    def style=(style)
+      @style = style
+    end
+
+    #
+    # Enable/disable headings for years (default: enabled)
+    # Params:
+    # +year_headings+:: boolean indicating whether year headings shall be rendered
+    def year_headings=(year_headings)
+      @year_headings = year_headings
+    end
+
+    #
+    # The CSS class used to render the surrounding +<ul>+ list (default: 'publications')
+    # Params:
+    # +css_class+:: string indicating the CSS class for rendering the publication list
+    def css_class=(css_class)
+      @css_class = css_class
+    end
+
+    #
+    # Shall links for DOIs be rendered? (default: true)
+    # Params:
+    # +doi_link+:: render DOI link
+    def doi_link=(doi_link)
+      @doi_link = doi_link
+    end
+
+    #
+    # Shall links for URLs of posts be rendered? (default: true)
+    # Params:
+    # +url_link+:: render URL link
+    def url_link=(url_link)
+      @url_link = url_link
+    end
+
+    #
+    # Shall links to the BibTeX of a post (in BibSonomy) be rendered? (default: true)
+    # Params:
+    # +bibtex_link+:: render BibTeX link
+    def bibtex_link=(bibtex_link)
+      @bibtex_link = bibtex_link
+    end
+
+    #
+    # Shall links to BibSonomy be rendered? (default: true)
+    # Params:
+    # +bibsonomy_link+:: render BibSonomy link
+    def bibsonomy_link=(bibsonomy_link)
+      @bibsonomy_link = bibsonomy_link
+    end
+
+    #
+    # Separator between options (default: ' | ')
+    # Params:
+    # +opt_sep+:: option separator
+    def opt_sep=(opt_sep)
+      @opt_sep = opt_sep
+    end
+
+    #
+    # When a post has several documents and the filename of one of
+    # them ends with +public_doc_postfix+, only this document is
+    # downloaded and linked, all other are ignored. (default:
+    # '_oa.pdf')
+    # Params:
+    # +public_doc_postfix+:: postfix to check at document filenames
+    def public_doc_postfix=(public_doc_postfix)
+      @public_doc_postfix = public_doc_postfix
+    end
+
   end
 
 
@@ -204,7 +328,7 @@ module BibSonomy
       opts.separator "Specific options:"
 
       # mandatory arguments are handled separately
-      
+
       # optional arguments
       opts.on('-u', '--user USER', 'return posts for USER instead of user') { |v| options[:user] = v }
       opts.on('-t', '--tags TAG,TAG,...', Array, 'return posts with the given tags') { |v| options[:tags] = v }
@@ -233,7 +357,7 @@ module BibSonomy
     begin
       mandatory = [:user_name, :api_key]
       missing = []
-      
+
       options[:api_key] = args.pop
       missing << :api_key unless options[:api_key]
 
@@ -257,9 +381,11 @@ module BibSonomy
     #
     # do the actual work
     #
-    csl = BibSonomy::CSL.new(options[:user_name], options[:api_key], options[:directory])
+    csl = BibSonomy::CSL.new(options[:user_name], options[:api_key])
+    csl.pdf_dir(options[:directory])
+    csl.style(options[:style])
 
-    html = csl.render(options[:user], options[:tags], options[:posts], options[:style])
+    html = csl.render(options[:user], options[:tags], options[:posts])
 
     return html
 
