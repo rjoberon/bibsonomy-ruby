@@ -33,9 +33,49 @@ require 'bibsonomy'
 
 module BibSonomy
   class CSL
+    ##
+    # :attr_accessor: pdf_dir
+    # The output directory for downloaded PDF files. If set to +nil+, no documents are downloaded. (default: +nil+)
 
-    attr_accessor :style, :pdf_dir, :css_class, :year_headings, :public_doc_prefix, :doi_link, :url_link, :bibtex_link, :bibsonomy_link, :opt_sep
+    ##
+    # :attr_accessor: style
+    # The CSL[http://citationstyles.org/] style used for rendering. (default: +apa.csl+)
+
+    ##
+    # :attr_accessor: year_headings
+    # A boolean indicating whether year headings shall be rendered. (default: enabled)
+
+    ##
+    # :attr_accessor: css_class
+    # The CSS class used to render the surrounding +<ul>+ list (default: 'publications')
+
+    ##
+    # :attr_accessor: doi_link
+    # A boolean indicating whether links for DOIs shall be rendered. (default: true)
+
+    ##
+    # :attr_accessor: url_link
+    # A boolean indicating whether URLs of posts shall be rendered. (default: true)
+
+    ##
+    # :attr_accessor: bibtex_link
+    # A boolean indicating whether links to the BibTeX data of a post (in BibSonomy) shall be rendered. (default: true)
+
+    ##
+    # :attr_accessor: bibsonomy_link
+    # A boolean indicating whether links  BibSonomy shall be rendered. (default: true)
     
+    ##
+    # :attr_accessor: opt_sep
+    # The separator between options. (default: ' | ')
+
+    ##
+    # :attr_accessor: public_doc_postfix
+    # When a post has several documents and the filename of one of them ends with +public_doc_postfix+, only this document is downloaded and linked, all other are ignored. (default: '_oa.pdf')
+
+    # publicly accessible attributes
+    attr_accessor :style, :pdf_dir, :css_class, :year_headings, :public_doc_postfix, :doi_link, :url_link, :bibtex_link, :bibsonomy_link, :opt_sep
+
     #
     # Create a new BibSonomy instance
     # Params:
@@ -150,6 +190,12 @@ module BibSonomy
       return result
     end
 
+
+    #
+    # private methods follow
+    #
+    private
+    
     def get_year(post)
       return post["issued"]["literal"]
     end
@@ -167,7 +213,7 @@ module BibSonomy
     end
 
     #
-    # only show PDF files and if
+    # only show PDF files
     #
     def get_public_docs(documents)
       result = []
@@ -219,93 +265,6 @@ module BibSonomy
     # format of the post ID for CSL: [0-9a-f]{32}USERNAME
     def get_intra_hash(post_id)
       return [post_id[0, 32], post_id[32, post_id.length]]
-    end
-
-    #
-    # setters
-    #
-
-    #
-    # Set the output directory for downloaded PDF files (default: +nil+)
-    # Params:
-    # +pdf_dir+:: directory for downloaded PDF files. If set to +nil+, no documents are downloaded.
-    def pdf_dir=(pdf_dir)
-      @pdf_dir = pdf_dir
-    end
-
-    #
-    # Set the CSL style used for rendering (default: +apa.csl+)
-    # Params:
-    # +style+:: CSL style used for rendering
-    def style=(style)
-      @style = style
-    end
-
-    #
-    # Enable/disable headings for years (default: enabled)
-    # Params:
-    # +year_headings+:: boolean indicating whether year headings shall be rendered
-    def year_headings=(year_headings)
-      @year_headings = year_headings
-    end
-
-    #
-    # The CSS class used to render the surrounding +<ul>+ list (default: 'publications')
-    # Params:
-    # +css_class+:: string indicating the CSS class for rendering the publication list
-    def css_class=(css_class)
-      @css_class = css_class
-    end
-
-    #
-    # Shall links for DOIs be rendered? (default: true)
-    # Params:
-    # +doi_link+:: render DOI link
-    def doi_link=(doi_link)
-      @doi_link = doi_link
-    end
-
-    #
-    # Shall links for URLs of posts be rendered? (default: true)
-    # Params:
-    # +url_link+:: render URL link
-    def url_link=(url_link)
-      @url_link = url_link
-    end
-
-    #
-    # Shall links to the BibTeX of a post (in BibSonomy) be rendered? (default: true)
-    # Params:
-    # +bibtex_link+:: render BibTeX link
-    def bibtex_link=(bibtex_link)
-      @bibtex_link = bibtex_link
-    end
-
-    #
-    # Shall links to BibSonomy be rendered? (default: true)
-    # Params:
-    # +bibsonomy_link+:: render BibSonomy link
-    def bibsonomy_link=(bibsonomy_link)
-      @bibsonomy_link = bibsonomy_link
-    end
-
-    #
-    # Separator between options (default: ' | ')
-    # Params:
-    # +opt_sep+:: option separator
-    def opt_sep=(opt_sep)
-      @opt_sep = opt_sep
-    end
-
-    #
-    # When a post has several documents and the filename of one of
-    # them ends with +public_doc_postfix+, only this document is
-    # downloaded and linked, all other are ignored. (default:
-    # '_oa.pdf')
-    # Params:
-    # +public_doc_postfix+:: postfix to check at document filenames
-    def public_doc_postfix=(public_doc_postfix)
-      @public_doc_postfix = public_doc_postfix
     end
 
   end

@@ -16,6 +16,6 @@ module BibSonomy
       @journal = publication["journal"]
       @url = publication["url"]
     end
-      
+
   end
 end

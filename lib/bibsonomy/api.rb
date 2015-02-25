@@ -64,9 +64,10 @@ module BibSonomy
     #
     # Get a single post
     #
-    # @param user_name [String] The name of the post's owner.
-    # @param intra_hash [String] The intrag hash of the post.
-    # @return [BibSonomy::Post] the requested post
+    # Params:
+    # +user_name+:: [String] The name of the post's owner.
+    # +intra_hash+:: [String] The intrag hash of the post.
+    # +return+:: [BibSonomy::Post] the requested post
     #
     def get_post(user_name, intra_hash)
       response = @conn.get "/api/users/" + CGI.escape(user_name) + "/posts/" + CGI.escape(intra_hash), { :format => @format }
@@ -81,10 +82,12 @@ module BibSonomy
     #
     # Get posts owned by a user, optionally filtered by tags.
     #
-    # @param user_name [String] The name of the posts' owner.
-    # @resource_type [String] The type of the post. Currently
-    # supported are 'bookmark' and 'publication'.
-    #
+    # Params:
+    # +user_name+:: [String] The name of the posts' owner.
+    # +resource_type+:: [String] The type of the post. Currently supported are 'bookmark' and 'publication'.
+    # +tags+::
+    # +start+::
+    # +endc+::
     def get_posts_for_user(user_name, resource_type, tags = nil, start = 0, endc = $MAX_POSTS_PER_REQUEST)
       params = {
         :format => @format,
@@ -110,8 +113,12 @@ module BibSonomy
     end
 
     #
-    # get a document belonging to a post
+    # Get a document belonging to a post.
     #
+    # Params:
+    # +user_name+::
+    # +intra_hash+::
+    # +file_name+::
     def get_document(user_name, intra_hash, file_name)
       response = @conn.get get_document_href(user_name, intra_hash, file_name)
       if response.status == 200
@@ -120,6 +127,14 @@ module BibSonomy
       return nil, nil
     end
 
+    #
+    # Get the preview for a document belonging to a post.
+    #
+    # Params:
+    # +user_name+::
+    # +intra_hash+::
+    # +file_name+::
+    # +size+::
     def get_document_preview(user_name, intra_hash, file_name, size)
       response = get_document_href(user_name, intra_hash, file_name), { :preview => size }
       if response.status = 200
@@ -128,11 +143,13 @@ module BibSonomy
       return nil, nil
     end
 
+
+    
+    private
+    
     #
     # Convenience method to allow sloppy specification of the resource
     # type.
-    #
-    # @private
     #
     def get_resource_type(resource_type)
       if $resource_types_bookmark.include? resource_type.downcase()
