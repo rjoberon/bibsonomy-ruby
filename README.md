@@ -97,19 +97,21 @@ Liquid::Template.register_tag('bibsonomy', Jekyll::BibSonomyPostList)
 
 The plugin can be used inside Markdown files as follows:
 
-```
+```Liquid
 {% bibsonomy jaeschke myown 100 %}
 ```
 
 Add the following options to your `_config.yml`:
 
-```
+```YAML
 bibsonomy_user: yourusername
 bibsonomy_apikey: yourapikey
 bibsonomy_document_directory: pdf
 # other: apa, acm-siggraph
 bibsonomy_style: springer-lecture-notes-in-computer-science
 ```
+
+For an example, have a look at [my publication list](http://www.kbs.uni-hannover.de/~jaeschke/publications.html).
 
 
 ## Contributing
