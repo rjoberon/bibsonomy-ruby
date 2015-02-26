@@ -63,9 +63,9 @@ module BibSonomy
     attr_accessor :opt_sep
 
     # @return [String] When a post has several documents and the
-    # filename of one of them ends with `public_doc_postfix`, only
-    # this document is downloaded and linked, all other are
-    # ignored. (default: '_oa.pdf')
+    #   filename of one of them ends with `public_doc_postfix`, only
+    #   this document is downloaded and linked, all other are
+    #   ignored. (default: '_oa.pdf')
     attr_accessor :public_doc_postfix
 
     #

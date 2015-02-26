@@ -30,9 +30,9 @@ module BibSonomy
     # @param api_key [String] the API key corresponding to the user account - can be obtained from http://www.bibsonomy.org/settings?selTab=1
     #
     # @param format [String] The requested return format. One of:
-    # 'xml', 'json', 'ruby', 'csl', 'bibtex'. The default is 'ruby'
-    # which returns Ruby objects defined by this library. Currently,
-    # 'csl' and 'bibtex' are only available for publications.
+    #   'xml', 'json', 'ruby', 'csl', 'bibtex'. The default is 'ruby'
+    #   which returns Ruby objects defined by this library. Currently,
+    #   'csl' and 'bibtex' are only available for publications.
     #
     def initialize(user_name, api_key, format = 'ruby')
 
