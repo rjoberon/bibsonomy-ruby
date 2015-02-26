@@ -1,6 +1,6 @@
 require './test/test_helper'
 
-class BibSonomyPostTest < Minitest::Unit::TestCase
+class BibSonomyPostTest < Minitest::Test
 
   def setup
     @api = BibSonomy::API.new(ENV['BIBSONOMY_USER_NAME'], ENV['BIBSONOMY_API_KEY'], 'ruby')
