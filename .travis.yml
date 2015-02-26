@@ -2,3 +2,11 @@ language: ruby
 rvm:
   - "2.1.5"
   - rbx
+
+
+# BIBSONOMY_USER_NAME & BIBSONOMY_API_KEY
+
+env:
+  secure: "X/sNNtu2KB18hfV0vLtnG+4VVZ8v0Mn8k6EE9dGoorLeh+/kNhyr0QyvKInQ1jQL8cRhXhEuhNMu/LRY2jwtKwAGFm9rWGfUxbRB3/HIPcL4g/eCEecXc1D8DZ79jcA/rmmmM3+OgetOQ+Lh+2cLwHA/Uv3og4CyPa3D/L2sSa0="
+  secure: "IYzfRIS7eb9xs7IQBwv2vAJwoHymncFMkDqj/FX1Or0Mun0KWpAJPL1SwHb9/r31k2F8/AMusKipRCi50I2wpv4pfG00qJYsbcxIY3tCB0alBsTBjHQ80dFR3Wzt3VMI61c14zP4oPdMoTgQ0sxxDZsG1yJv2nncfQX4bKmlcjU="
+  
