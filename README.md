@@ -3,6 +3,7 @@
 BibSonomy client for Ruby
 
 [![Gem Version](https://badge.fury.io/rb/bibsonomy.svg)](http://badge.fury.io/rb/bibsonomy)
+[![Build Status](https://travis-ci.org/rjoberon/bibsonomy-ruby.svg?branch=master)](https://travis-ci.org/rjoberon/bibsonomy-ruby)
 [![Coverage Status](https://coveralls.io/repos/rjoberon/bibsonomy-ruby/badge.svg)](https://coveralls.io/r/rjoberon/bibsonomy-ruby)
 
 ## Installation
