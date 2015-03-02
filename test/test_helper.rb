@@ -2,6 +2,7 @@ require 'simplecov'
 SimpleCov.start
 
 require './lib/bibsonomy'
+require './lib/bibsonomy/csl'
 require 'minitest/autorun'
 require 'webmock/minitest'
 require 'vcr'

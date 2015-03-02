@@ -1,5 +1,4 @@
 require './test/test_helper'
-require './lib/bibsonomy/csl'
 
 class BibSonomyCSLTest < Minitest::Test
 
