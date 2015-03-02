@@ -33,5 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "citeproc", "~> 1.0"
   spec.add_dependency "citeproc-ruby", "~> 1.0"
   spec.add_dependency "csl-styles", "~> 1.0"
+  spec.add_dependency "csl", "~> 1.2"
 
 end
