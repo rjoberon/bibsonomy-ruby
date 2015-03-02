@@ -48,4 +48,14 @@ class BibSonomyPostTest < Minitest::Test
       assert_equal "A test file\n", pdf
     end
   end
+
+
+  def test_get_document_preview
+    VCR.use_cassette('get_document_preview') do
+      jpeg, mimetype = @api.get_document_preview("bibsonomy-ruby", "c9437d5ec56ba949f533aeec00f571e3", "test.pdf", "SMALL")
+      assert_equal "image/jpeg", mimetype
+      assert_equal ["ffd8ffe00010"].pack('H*') + "JFIF", jpeg[0..9]
+    end
+  end
+
 end

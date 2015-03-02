@@ -2,7 +2,6 @@
 require 'faraday'
 require 'json'
 
-
 # configuration options
 $API_URL = "https://www.bibsonomy.org/"
 $MAX_POSTS_PER_REQUEST = 20
@@ -127,11 +126,11 @@ module BibSonomy
     # @param user_name
     # @param intra_hash
     # @param file_name
-    # @param size
+    # @param size [String] requested preview size (allowed values: SMALL, MEDIUM, LARGE)
     # @return the preview image and the content type `image/jpeg`
     def get_document_preview(user_name, intra_hash, file_name, size)
-      response = get_document_href(user_name, intra_hash, file_name), { :preview => size }
-      if response.status = 200
+      response = @conn.get get_document_href(user_name, intra_hash, file_name), { :preview => size }
+      if response.status == 200
         return [response.body, 'image/jpeg']
       end
       return nil, nil
