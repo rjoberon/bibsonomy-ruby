@@ -190,7 +190,16 @@ module BibSonomy
     private
     
     def get_year(post)
-      return post["issued"]["literal"]
+      issued = post["issued"]
+      # if the post contains only a "year" field, it is contained in
+      # the field "literal"
+      if issued["literal"]
+        return issued["literal"]
+      else
+        # otherwise, the date can be contained in the "raw" field
+        # TODO: extract the year ([12][0-9]{3}) from that field
+        return issued["raw"]
+      end
     end
 
     def get_sort_posts(a, b)
@@ -202,6 +211,8 @@ module BibSonomy
       if person_b.length == 0
         person_b = b["editor"]
       end
+      # we switch the order of person_b and person_a, to sort
+      # descending by year but ascending by person name
       return [get_year(a), a["type"], person_b[0]["family"]] <=> [get_year(b), b["type"], person_a[0]["family"]]
     end
 
