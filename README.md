@@ -49,6 +49,17 @@ require 'bibsonomy/csl'
 print BibSonomy::main(ARGV)
 ```
 
+## Testing
+
+Get an API-Key from <http://www.bibsonomy.org/settings?selTab=1> and
+then run the following commands:
+
+```shell
+export BIBSONOMY_USER_NAME="yourusername"
+export BIBSONOMY_API_KEY="yourapikey"
+bundle exec rake test
+```
+
 ## Jekyll
 
 A [Jekyll](http://jekyllrb.com/) plugin:
