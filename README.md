@@ -126,7 +126,10 @@ bibsonomy_document_directory: pdf
 bibsonomy_style: springer-lecture-notes-in-computer-science
 ```
 
-For an example, have a look at [my publication list](http://www.kbs.uni-hannover.de/~jaeschke/publications.html).
+For an example how to use the Jekyll plugin, have a look at
+[the demo project](https://github.com/rjoberon/bibsonomy-jekyll-demo)
+and for an example showing the output, have a look at
+[my publication list](http://www.kbs.uni-hannover.de/~jaeschke/publications.html).
 
 
 ## Contributing
