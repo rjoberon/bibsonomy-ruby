@@ -60,6 +60,15 @@ export BIBSONOMY_API_KEY="yourapikey"
 bundle exec rake test
 ```
 
+## Supported API Calls
+
+- `get_post`: [post details](https://bitbucket.org/bibsonomy/bibsonomy/wiki/documentation/api/methods/DetailsForPost) 
+- `get_posts_for_user`:
+[posts for a user](https://bitbucket.org/bibsonomy/bibsonomy/wiki/documentation/api/methods/ListOfPostsForUser)
+- `get_posts_for_group` : posts for a group (= posts of the group members)
+- `get_document`: documents for post
+- `get_document_preview`: preview image for a document
+
 ## Jekyll
 
 A [Jekyll](http://jekyllrb.com/) plugin:

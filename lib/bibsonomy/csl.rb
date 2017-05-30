@@ -18,8 +18,12 @@ require 'bibsonomy'
 # - number of posts
 # - style
 # - directory
+# - group
 #
 # Changes:
+# 2017-01-19
+# - added optional parameter group to control which posts are
+#   included based on their viewability for a specific group (not yet activated!)
 # 2015-02-24
 # - initial version
 #
@@ -29,6 +33,7 @@ require 'bibsonomy'
 # @todo add intra_hash, user_name, etc. to CSL (cf. https://bitbucket.org/bibsonomy/bibsonomy/issue/2411/)
 # @todo integrate AJAX abstract
 # @todo make all options available via command line
+# @todo support filtering of posts by group (viewability)
 #
 # @author Robert Jäschke
 
@@ -68,6 +73,9 @@ module BibSonomy
     #   ignored. (default: '_oa.pdf')
     attr_accessor :public_doc_postfix
 
+    # @return [String] which posts shall be included, based on the groups they are viewable for
+    attr_accessor :group
+    
     #
     # Create a new BibSonomy instance.
     #
@@ -82,6 +90,7 @@ module BibSonomy
       @css_class = 'publications'
       @year_headings = true
       @public_doc_postfix = '_oa.pdf'
+      @group = 'public'
 
       # optional parts to be rendered (or not)
       @doi_link = true
@@ -108,6 +117,17 @@ module BibSonomy
 
       # to check for duplicate file names
       file_names = []
+
+      # filter posts by group
+      # 2017-05-30, rja, disabled until group information is returned by the API
+      # posts.delete_if do |v|
+      #   if v["group"] == @group
+      #     true
+      #   else
+      #     print("WARN: " + v["group"])
+      #     false
+      #   end
+      # end
 
       # sort posts by year
       sorted_keys = posts.keys.sort { |a,b| get_sort_posts(posts[b], posts[a]) }
@@ -286,6 +306,7 @@ module BibSonomy
     options.directory = nil
     options.tags = []
     options.style = "apa.csl"
+    options.group = "public"
     options.posts = 1000
 
     opt_parser = OptionParser.new do |opts|
@@ -300,6 +321,7 @@ module BibSonomy
       opts.on('-u', '--user USER', 'return posts for USER instead of user') { |v| options[:user] = v }
       opts.on('-t', '--tags TAG,TAG,...', Array, 'return posts with the given tags') { |v| options[:tags] = v }
       opts.on('-s', '--style STYLE', 'use CSL style STYLE for rendering') { |v| options[:style] = v }
+      opts.on('-g', '--group GROUP', 'include only posts viewable for GROUP') { |v| options[:group] = v }
       opts.on('-n', '--number-of-posts [COUNT]', Integer, 'number of posts to download') { |v| options[:posts] = v }
       opts.on('-d', '--directory DIR', 'target directory', '  (if not given, no documents are downloaed)') { |v| options[:directory] = v }
 
@@ -344,13 +366,14 @@ module BibSonomy
 
     # set defaults for optional arguments
     options[:user] = options[:user_name] unless options[:user]
-
+    
     #
     # do the actual work
     #
     csl = BibSonomy::CSL.new(options[:user_name], options[:api_key])
     csl.pdf_dir = options[:directory]
     csl.style = options[:style]
+    csl.group = options[:group]
 
     html = csl.render(options[:user], options[:tags], options[:posts])
 

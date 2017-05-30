@@ -19,6 +19,10 @@ $resource_types_bibtex = ['bibtex', 'pub', 'publication', 'publications', 'publ'
 # @todo getting more than 1000 posts
 #
 # @author Robert Jäschke
+#
+# Changes:
+# 2017-05-30 (rja)
+# - added get_posts_for_group
 # 
 module BibSonomy
   class API
@@ -101,6 +105,37 @@ module BibSonomy
       return response.body
     end
 
+    #
+    # Get the posts of the users of a group, optionally filtered by tags.
+    #
+    # @param group_name [String] the name of the group
+    # @param resource_type [String] the type of the post. Currently supported are 'bookmark' and 'publication'.
+    # @param tags [Array<String>] the tags that all posts must contain (can be empty)
+    # @param start [Integer] number of first post to download
+    # @param endc [Integer] number of last post to download
+    # @return [Array<BibSonomy::Post>, String] the requested posts
+    def get_posts_for_group(group_name, resource_type, tags = nil, start = 0, endc = $MAX_POSTS_PER_REQUEST)
+      params = {
+        :format => @format,
+        :resourcetype => get_resource_type(resource_type),
+        :start => start,
+        :end => endc,
+        :group => group_name
+      }
+      # add tags, if requested
+      if tags != nil
+        params[:tags] = tags.join(" ")
+      end
+      response = @conn.get "/api/posts", params
+
+      if @parse
+        posts = JSON.parse(response.body)["posts"]["post"]
+        return posts.map { |attributes| Post.new(attributes) }
+      end
+      return response.body
+    end
+
+    
     def get_document_href(user_name, intra_hash, file_name)
       return "/api/users/" + CGI.escape(user_name) + "/posts/" + CGI.escape(intra_hash) + "/documents/" + CGI.escape(file_name)
     end

@@ -3,7 +3,7 @@
 module BibSonomy
   class Post
 
-    attr_reader :user_name, :intra_hash, :title, :year, :entrytype, :booktitle, :journal, :url
+    attr_reader :user_name, :intra_hash, :groups, :title, :year, :entrytype, :booktitle, :journal, :url
 
     def initialize(post)
       publication = post["bibtex"]
@@ -15,6 +15,11 @@ module BibSonomy
       @booktitle = publication["booktitle"]
       @journal = publication["journal"]
       @url = publication["url"]
+      # extract group names
+      @groups = []
+      post["group"].each do |group|
+        @groups << group["name"]
+      end
     end
 
   end

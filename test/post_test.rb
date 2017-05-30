@@ -37,6 +37,19 @@ class BibSonomyPostTest < Minitest::Test
     end      
   end
 
+  def test_get_posts_for_group
+    VCR.use_cassette('get_posts_for_group') do
+      result = @api.get_posts_for_group("iccs", "publication", ["test"], 0, 10)
+      
+      # Make sure we got all the posts
+      assert_equal 2, result.length
+      
+      # Make sure that the JSON was parsed
+      assert result.kind_of?(Array)
+      assert result.first.kind_of?(BibSonomy::Post)
+    end      
+  end
+
   def test_get_document_href
     assert_equal "/api/users/bibsonomy-ruby/posts/c9437d5ec56ba949f533aeec00f571e3/documents/paper.pdf", @api.get_document_href("bibsonomy-ruby", "c9437d5ec56ba949f533aeec00f571e3", "paper.pdf")
   end
