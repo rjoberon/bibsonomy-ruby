@@ -12,7 +12,7 @@ class BibSonomyCSLTest < Minitest::Test
   
   def test_render
     VCR.use_cassette('render') do
-      html = @csl.render("bibsonomy-ruby", [], 10)
+      html = @csl.render("user", "bibsonomy-ruby", [], 10)
 
       assert_equal "<h3>2010</h3>", html[0..12]
       assert_equal "</ul>", html[-6..-2]

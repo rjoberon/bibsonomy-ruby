@@ -21,6 +21,8 @@ require 'bibsonomy'
 # - group
 #
 # Changes:
+# 2017-05-31
+# - added support to get posts of a group
 # 2017-01-19
 # - added optional parameter group to control which posts are
 #   included based on their viewability for a specific group (not yet activated!)
@@ -103,13 +105,14 @@ module BibSonomy
     #
     # Download `count` posts for the given `user` and `tag(s)` and render them with {http://citationstyles.org/ CSL}.
     #
-    # @param user [String] the name of the posts' owner
+    # @param grouping [String] the type of the name (either "user" or "group")
+    # @param name [String] the name of the group or user
     # @param tags [Array<String>] the tags that all posts must contain (can be empty)
     # @param count [Integer] number of posts to download
     # @return [String] the rendered posts as HTML
-    def render(user, tags, count)
+    def render(grouping, name, tags, count)
       # get posts from BibSonomy
-      posts = JSON.parse(@bibsonomy.get_posts_for_user(user, 'publication', tags, 0, count))
+      posts = JSON.parse(@bibsonomy.get_posts(grouping, name, 'publication', tags, 0, count))
 
       # render them with citeproc
       cp = CiteProc::Processor.new style: @style, format: 'html'
