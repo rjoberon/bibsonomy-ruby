@@ -68,6 +68,7 @@ bundle exec rake test
 - `get_posts_for_group` : posts for a group (= posts of the group members)
 - `get_document`: documents for post
 - `get_document_preview`: preview image for a document
+- `get_posts`: [posts for a user or group](https://bitbucket.org/bibsonomy/bibsonomy/wiki/documentation/api/methods/ListOfAllPosts)
 
 ## Jekyll
 

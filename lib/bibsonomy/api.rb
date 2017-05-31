@@ -21,9 +21,11 @@ $resource_types_bibtex = ['bibtex', 'pub', 'publication', 'publications', 'publ'
 # @author Robert Jäschke
 #
 # Changes:
+# 2017-05-31 (rja)
+# - refactored get_posts_for_group and get_posts_for_user into get_posts
 # 2017-05-30 (rja)
 # - added get_posts_for_group
-# 
+#
 module BibSonomy
   class API
 
@@ -86,23 +88,7 @@ module BibSonomy
     # @param endc [Integer] number of last post to download
     # @return [Array<BibSonomy::Post>, String] the requested posts
     def get_posts_for_user(user_name, resource_type, tags = nil, start = 0, endc = $MAX_POSTS_PER_REQUEST)
-      params = {
-        :format => @format,
-        :resourcetype => get_resource_type(resource_type),
-        :start => start,
-        :end => endc
-      }
-      # add tags, if requested
-      if tags != nil
-        params[:tags] = tags.join(" ")
-      end
-      response = @conn.get "/api/users/" + CGI.escape(user_name) + "/posts", params
-
-      if @parse
-        posts = JSON.parse(response.body)["posts"]["post"]
-        return posts.map { |attributes| Post.new(attributes) }
-      end
-      return response.body
+      return get_posts("user", user_name, resource_type, tags, start, endc)
     end
 
     #
@@ -115,17 +101,37 @@ module BibSonomy
     # @param endc [Integer] number of last post to download
     # @return [Array<BibSonomy::Post>, String] the requested posts
     def get_posts_for_group(group_name, resource_type, tags = nil, start = 0, endc = $MAX_POSTS_PER_REQUEST)
+      return get_posts("group", group_name, resource_type, tags, start, endc)
+    end
+
+    #
+    # Get posts for a user or group, optionally filtered by tags.
+    #
+    # @param grouping [String] the type of the name (either "user" or "group")
+    # @param name [String] the name of the group or user
+    # @param resource_type [String] the type of the post. Currently supported are 'bookmark' and 'publication'.
+    # @param tags [Array<String>] the tags that all posts must contain (can be empty)
+    # @param start [Integer] number of first post to download
+    # @param endc [Integer] number of last post to download
+    # @return [Array<BibSonomy::Post>, String] the requested posts
+    def get_posts(grouping, name, resource_type, tags = nil, start = 0, endc = $MAX_POSTS_PER_REQUEST)
       params = {
         :format => @format,
         :resourcetype => get_resource_type(resource_type),
         :start => start,
-        :end => endc,
-        :group => group_name
+        :end => endc
       }
+      # decide what to get
+      if grouping == "user"
+        params[:user] = name
+      elsif grouping == "group"
+        params[:group] = name
+      end
       # add tags, if requested
       if tags != nil
         params[:tags] = tags.join(" ")
       end
+
       response = @conn.get "/api/posts", params
 
       if @parse
@@ -135,7 +141,7 @@ module BibSonomy
       return response.body
     end
 
-    
+
     def get_document_href(user_name, intra_hash, file_name)
       return "/api/users/" + CGI.escape(user_name) + "/posts/" + CGI.escape(intra_hash) + "/documents/" + CGI.escape(file_name)
     end
@@ -172,9 +178,9 @@ module BibSonomy
     end
 
 
-    
+
     private
-    
+
     #
     # Convenience method to allow sloppy specification of the resource
     # type.
