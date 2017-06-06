@@ -20,11 +20,15 @@ class BibSonomyCSLTest < Minitest::Test
   end
 
   def test_render_doi
-    VCR.use_cassette('render') do
+    VCR.use_cassette('render_doi') do
       html = @csl.render("user", "bibsonomy-ruby", ["doiok"], 10)
       # DOI is correct
       assert_equal "DOI:<a href='https://dx.doi.org/10.1007/s00778-010-0208-4'>10.1007/s00778-010-0208-4</a>", html[338,88]
+    end
+  end
 
+  def test_render_broken_doi
+    VCR.use_cassette('render_broken_doi') do
       # DOI is a URL
       html = @csl.render("user", "bibsonomy-ruby", ["brokendoi", "test"], 10)
       # thus we have http not https
