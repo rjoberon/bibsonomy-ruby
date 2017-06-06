@@ -84,7 +84,7 @@ module BibSonomy
     # Create a new BibSonomy instance.
     #
     # @param user_name [String] the BibSonomy user name
-    # @param api_key [String] the API key of the user (get at http://www.bibsonomy.org/settings?selTab=1)
+    # @param api_key [String] the API key of the user (get at https://www.bibsonomy.org/settings?selTab=1)
     def initialize(user_name, api_key)
       super()
       @bibsonomy = BibSonomy::API.new(user_name, api_key, 'csl')
@@ -190,11 +190,11 @@ module BibSonomy
         end
         # attach BibTeX
         if @bibtex_link
-          options << "<a href='http://www.bibsonomy.org/bib/publication/#{intra_hash}/#{user_name}'>BibTeX</a>"
+          options << "<a href='https://www.bibsonomy.org/bib/publication/#{intra_hash}/#{user_name}'>BibTeX</a>"
         end
         # attach link to BibSonomy
         if @bibsonomy_link
-          options << "<a href='http://www.bibsonomy.org/publication/#{intra_hash}/#{user_name}'>BibSonomy</a>"
+          options << "<a href='https://www.bibsonomy.org/publication/#{intra_hash}/#{user_name}'>BibSonomy</a>"
         end
 
         # attach options
@@ -226,7 +226,7 @@ module BibSonomy
           return doi, doi
         end
       else
-        return doi, "http://dx.doi.org/#{doi}"
+        return doi, "https://dx.doi.org/#{doi}"
       end
     end
 
