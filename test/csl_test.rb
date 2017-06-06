@@ -19,6 +19,16 @@ class BibSonomyCSLTest < Minitest::Test
     end
   end
 
+  def test_render_all
+    VCR.use_cassette('render_all') do
+      html = @csl.render("user", "bibsonomy-ruby", [], 10)
+
+      assert_equal "<h3>2015</h3>", html[0..12]
+      assert_equal "<h3>2010</h3>", html[764..776]
+      assert_equal "</ul>", html[-6..-2]
+    end
+  end
+
   def test_render_doi
     VCR.use_cassette('render_doi') do
       html = @csl.render("user", "bibsonomy-ruby", ["doiok"], 10)
