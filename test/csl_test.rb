@@ -23,10 +23,11 @@ class BibSonomyCSLTest < Minitest::Test
     VCR.use_cassette('render') do
       html = @csl.render("user", "bibsonomy-ruby", ["doiok"], 10)
       # DOI is correct
-      assert_equal "DOI:<a href='http://dx.doi.org/10.1007/s00778-010-0208-4'>10.1007/s00778-010-0208-4</a>", html[327,87]
+      assert_equal "DOI:<a href='https://dx.doi.org/10.1007/s00778-010-0208-4'>10.1007/s00778-010-0208-4</a>", html[327,88]
 
       # DOI is a URL
       html = @csl.render("user", "bibsonomy-ruby", ["brokendoi", "test"], 10)
+      # thus we have http not https!
       assert_equal "DOI:<a href='http://dx.doi.org/10.1145/2786451.2786927'>10.1145/2786451.2786927</a>", html[362,83]
     end
   end
