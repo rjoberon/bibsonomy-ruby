@@ -27,7 +27,7 @@ class BibSonomyCSLTest < Minitest::Test
 
       # DOI is a URL
       html = @csl.render("user", "bibsonomy-ruby", ["brokendoi", "test"], 10)
-      # thus we have http not https!
+      # thus we have http not https
       assert_equal "DOI:<a href='http://dx.doi.org/10.1145/2786451.2786927'>10.1145/2786451.2786927</a>", html[373,83]
     end
   end
