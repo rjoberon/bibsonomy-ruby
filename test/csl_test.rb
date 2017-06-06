@@ -23,6 +23,7 @@ class BibSonomyCSLTest < Minitest::Test
     VCR.use_cassette('render') do
       html = @csl.render("user", "bibsonomy-ruby", ["doiok"], 10)
       # DOI is correct
+      print(html)
       assert_equal "DOI:<a href='https://dx.doi.org/10.1007/s00778-010-0208-4'>10.1007/s00778-010-0208-4</a>", html[327,88]
 
       # DOI is a URL
