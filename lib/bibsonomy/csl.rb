@@ -21,12 +21,14 @@ require 'bibsonomy'
 # - group
 #
 # Changes:
-# 2017-05-31
+# 2017-06-06 (rja)
+# - added support for DOIs which are actually URLs (i.e., include the resolver)
+# 2017-05-31 (rja)
 # - added support to get posts of a group
-# 2017-01-19
+# 2017-01-19 (rja)
 # - added optional parameter group to control which posts are
 #   included based on their viewability for a specific group (not yet activated!)
-# 2015-02-24
+# 2015-02-24 (rja)
 # - initial version
 #
 # @todo escape data
@@ -41,7 +43,7 @@ require 'bibsonomy'
 
 module BibSonomy
   class CSL
-    
+
     # @return [String] the output directory for downloaded PDF files. If set to `nil`, no documents are downloaded. (default: `nil`)
     attr_accessor :pdf_dir
 
@@ -59,7 +61,7 @@ module BibSonomy
 
     # @return [Boolean] whether URLs of posts shall be rendered. (default: `true`)
     attr_accessor :url_link
-    
+
     # @return [Boolean] whether links to the BibTeX data of a post (in BibSonomy) shall be rendered. (default: `true`)
     attr_accessor :bibtex_link
 
@@ -77,7 +79,7 @@ module BibSonomy
 
     # @return [String] which posts shall be included, based on the groups they are viewable for
     attr_accessor :group
-    
+
     #
     # Create a new BibSonomy instance.
     #
@@ -178,7 +180,8 @@ module BibSonomy
         # attach DOI
         doi = post["DOI"]
         if @doi_link and doi != ""
-          options << "DOI:<a href='http://dx.doi.org/#{doi}'>#{doi}</a>"
+          doi, doi_url = get_doi(doi)
+          options << "DOI:<a href='#{doi_url}'>#{doi}</a>"
         end
         # attach URL
         url = post["URL"]
@@ -211,7 +214,22 @@ module BibSonomy
     # private methods follow
     #
     private
-    
+
+    # given a DOI (or a URL with a DOI) return DOI and resolvable URL
+    def get_doi(doi)
+      # simplistic check whether DOI is a URL
+      if doi.start_with?("http")
+        # extract DOI, regex from https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+        if doi =~ /(10.\d{4,9}\/[-._;()\/:A-Z0-9]+)/i
+          return $1, doi
+        else
+          return doi, doi
+        end
+      else
+        return doi, "http://dx.doi.org/#{doi}"
+      end
+    end
+
     def get_year(post)
       issued = post["issued"]
       # if the post contains only a "year" field, it is contained in
@@ -369,7 +387,7 @@ module BibSonomy
 
     # set defaults for optional arguments
     options[:user] = options[:user_name] unless options[:user]
-    
+
     #
     # do the actual work
     #
