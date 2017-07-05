@@ -3,6 +3,8 @@ require './test/test_helper'
 class BibSonomyCSLTest < Minitest::Test
 
   def setup
+    # create directory for documents
+    Dir.mkdir 'docs' unless File.exists?('docs')
     @csl = BibSonomy::CSL.new(ENV['BIBSONOMY_USER_NAME'], ENV['BIBSONOMY_API_KEY'])
   end
 
