@@ -19,8 +19,12 @@ require 'bibsonomy'
 # - style
 # - directory
 # - group
+# - altmetric
 #
 # Changes:
+# 2017-07-05 (rja)
+# - added support for Altmetric badges
+# - adapted options for command line use to support groups
 # 2017-06-06 (rja)
 # - added support for DOIs which are actually URLs (i.e., include the resolver)
 # 2017-05-31 (rja)
@@ -71,6 +75,9 @@ module BibSonomy
     # @return [String] the separator between options. (default: ' | ')
     attr_accessor :opt_sep
 
+    # @return [String] the badge type for embedded Altmetric badges. If set to `nil`, no badge is included. (default: `nil`)
+    attr_accessor :altmetric_badge_type
+
     # @return [String] When a post has several documents and the
     #   filename of one of them ends with `public_doc_postfix`, only
     #   this document is downloaded and linked, all other are
@@ -95,6 +102,7 @@ module BibSonomy
       @year_headings = true
       @public_doc_postfix = '_oa.pdf'
       @group = 'public'
+      @altmetric_badge_type = nil
 
       # optional parts to be rendered (or not)
       @doi_link = true
@@ -200,6 +208,12 @@ module BibSonomy
         # attach options
         if options.length > 0
           result += " <span class='opt'>[" + options.join(@opt_sep) + "]</span>"
+        end
+
+        # attach Altmetric badge
+        if @altmetric_badge_type and doi != ""
+          doi, doi_url = get_doi(doi)
+          result += "<div class='altmetric-embed' data-badge-type='#{@altmetric_badge_type}' data-doi='#{doi}'></div>"
         end
 
         result += "</li>\n"
@@ -327,7 +341,8 @@ module BibSonomy
     options.directory = nil
     options.tags = []
     options.style = "apa.csl"
-    options.group = "public"
+    options.viewable_group = "public"
+    options.altmetric = nil
     options.posts = 1000
 
     opt_parser = OptionParser.new do |opts|
@@ -339,12 +354,14 @@ module BibSonomy
       # mandatory arguments are handled separately
 
       # optional arguments
-      opts.on('-u', '--user USER', 'return posts for USER instead of user') { |v| options[:user] = v }
+      opts.on('-u', '--user USER', 'get posts for USER') { |v| options[:user] = v }
+      opts.on('-g', '--group GROUP', 'get posts for GROUP') { |v| options[:group] = v }
       opts.on('-t', '--tags TAG,TAG,...', Array, 'return posts with the given tags') { |v| options[:tags] = v }
       opts.on('-s', '--style STYLE', 'use CSL style STYLE for rendering') { |v| options[:style] = v }
-      opts.on('-g', '--group GROUP', 'include only posts viewable for GROUP') { |v| options[:group] = v }
+      opts.on('--viewable-group GROUP', 'include only posts viewable for GROUP') { |v| options[:viewable_group] = v }
       opts.on('-n', '--number-of-posts [COUNT]', Integer, 'number of posts to download') { |v| options[:posts] = v }
       opts.on('-d', '--directory DIR', 'target directory', '  (if not given, no documents are downloaed)') { |v| options[:directory] = v }
+      opts.on('-a', '--altmetric TYPE', 'render Altmetric badge with type TYPE') { |v| options[:altmetric] = v }
 
       opts.separator ""
       opts.separator "Common options:"
@@ -385,18 +402,29 @@ module BibSonomy
       exit
     end
 
-    # set defaults for optional arguments
-    options[:user] = options[:user_name] unless options[:user]
-
     #
     # do the actual work
     #
     csl = BibSonomy::CSL.new(options[:user_name], options[:api_key])
     csl.pdf_dir = options[:directory]
     csl.style = options[:style]
-    csl.group = options[:group]
+    csl.group = options[:viewable_group]
+    csl.altmetric_badge_type = options[:altmetric]
 
-    html = csl.render(options[:user], options[:tags], options[:posts])
+    if options[:group]
+      grouping = "group"
+      name = options[:group]
+    elsif options[:user]
+      grouping = "user"
+      name = options[:user]
+    else
+      # default: API user
+      grouping = "user"
+      name = options[:user_name]
+    end
+
+    puts "call: #{grouping}, #{name}"
+    html = csl.render(grouping, name, options[:tags], options[:posts])
 
     return html
 

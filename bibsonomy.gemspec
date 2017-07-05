@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Wraps the BibSonomy REST API.}
   spec.description   = %q{Enables calls to the BibSonomy REST API with Ruby.}
   spec.homepage      = "https://github.com/rjoberon/bibsonomy-ruby"
-  spec.license       = "LGPL 2.1"
+  spec.license       = "LGPL-2.1"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov", '~> 0.7'
   
   spec.add_dependency "faraday", "~> 0.9"
-  spec.add_dependency "json", "~> 1.8"
+  spec.add_dependency "json", "~> 2.0"
   spec.add_dependency "citeproc", "~> 1.0"
   spec.add_dependency "citeproc-ruby", "~> 1.0"
   spec.add_dependency "csl-styles", "~> 1.0"
