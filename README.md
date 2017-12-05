@@ -76,7 +76,7 @@ This gem is used by the
 [BibSonomy plugin](https://github.com/rjoberon/bibsonomy-jekyll) for
 [Jekyll](http://jekyllrb.com/) to render post lists in Jekyll web
 sites. For an example output, have a look at
-[my publication list](http://www.kbs.uni-hannover.de/~jaeschke/publications.html).
+[my publication list](https://amor.cms.hu-berlin.de/~jaeschkr/publications.html).
 
 ## Contributing
 
