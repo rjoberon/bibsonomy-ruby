@@ -30,9 +30,11 @@ Gem::Specification.new do |spec|
   
   spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "json", "~> 2.0"
-  spec.add_dependency "citeproc", "~> 1.0"
-  spec.add_dependency "citeproc-ruby", "~> 1.0"
+  spec.add_dependency "citeproc", "~> 1.0", '>= 1.0.9'
+  spec.add_dependency "citeproc-ruby", "~> 1.0", '>= 1.1.10'
   spec.add_dependency "csl-styles", "~> 1.0"
-  spec.add_dependency "csl", "~> 1.2"
+  spec.add_dependency "csl", "~> 1.5"
+  # required by citeproc-ruby when Ruby version <= 2.4
+  spec.add_dependency "unicode"
 
 end
