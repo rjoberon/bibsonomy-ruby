@@ -35,6 +35,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "csl-styles", "~> 1.0"
   spec.add_dependency "csl", "~> 1.5"
   # required by citeproc-ruby when Ruby version <= 2.4
-  spec.add_dependency "unicode"
+  spec.add_dependency "unicode", "~> 0.4", ">=0.4.4.4"
 
 end
