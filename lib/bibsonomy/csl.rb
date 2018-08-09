@@ -22,6 +22,8 @@ require 'bibsonomy'
 # - altmetric
 #
 # Changes:
+# 2018-08-09 (rja)
+# - shortened DOI URL
 # 2017-07-05 (rja)
 # - added support for Altmetric badges
 # - adapted options for command line use to support groups
@@ -240,7 +242,7 @@ module BibSonomy
           return doi, doi
         end
       else
-        return doi, "https://dx.doi.org/#{doi}"
+        return doi, "https://doi.org/#{doi}"
       end
     end
 
