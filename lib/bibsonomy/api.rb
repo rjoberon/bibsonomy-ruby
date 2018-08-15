@@ -1,6 +1,4 @@
 # coding: utf-8
-require 'faraday'
-require 'json'
 
 # configuration options
 $API_URL = "https://www.bibsonomy.org/"
