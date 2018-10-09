@@ -2,6 +2,7 @@
 require 'citeproc'
 require 'csl/styles'
 require 'optparse'
+require "bibsonomy/api"
 
 #
 # Generates a list of publication posts from BibSonomy
