@@ -3,6 +3,7 @@ require 'citeproc'
 require 'csl/styles'
 require 'json'
 require 'faraday'
+require 'addressable/template'
 
 require_relative "bibsonomy/version"
 require_relative "bibsonomy/post"
