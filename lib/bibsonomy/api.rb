@@ -63,10 +63,9 @@ module BibSonomy
       @conn.basic_auth(user_name, api_key)
 
       # initialise URLs
-      @url_post = Addressable::Template.new("/api/users/{user_name}/posts/{intra_hash}?format={format}")
+      @url_post  = Addressable::Template.new("/api/users/{user_name}/posts/{intra_hash}?format={format}")
       @url_posts = Addressable::Template.new("/api/posts{?format,resourcetype,start,end,user,group,tags}")
-
-      @url_doc = Addressable::Template.new("/api/users/{user_name}/posts/{intra_hash}/documents/{file_name}")
+      @url_doc   = Addressable::Template.new("/api/users/{user_name}/posts/{intra_hash}/documents/{file_name}")
     end
 
 
