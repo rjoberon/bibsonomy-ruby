@@ -1,4 +1,7 @@
 # coding: utf-8
+require 'citeproc'
+require 'csl/styles'
+require 'optparse'
 
 #
 # Generates a list of publication posts from BibSonomy
