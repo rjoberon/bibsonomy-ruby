@@ -1,6 +1,6 @@
 # BibSonomy
 
-[BibSonomy](http://www.bibsonomy.org/) client for Ruby
+[BibSonomy](https://www.bibsonomy.org/) client for Ruby
 
 [![Gem Version](https://badge.fury.io/rb/bibsonomy.svg)](http://badge.fury.io/rb/bibsonomy)
 [![Build Status](https://travis-ci.org/rjoberon/bibsonomy-ruby.svg?branch=master)](https://travis-ci.org/rjoberon/bibsonomy-ruby)
@@ -51,7 +51,7 @@ print BibSonomy::main(ARGV)
 
 ## Testing
 
-Get an API-Key from <http://www.bibsonomy.org/settings?selTab=1> and
+Get an API-Key from <https://www.bibsonomy.org/settings?selTab=1> and
 then run the following commands:
 
 ```shell

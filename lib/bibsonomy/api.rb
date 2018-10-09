@@ -1,6 +1,7 @@
 # coding: utf-8
 require 'faraday'
 require 'json'
+require 'addressable/template'
 
 # configuration options
 $API_URL = "https://www.bibsonomy.org/"
@@ -21,6 +22,8 @@ $resource_types_bibtex = ['bibtex', 'pub', 'publication', 'publications', 'publ'
 # @author Robert Jäschke
 #
 # Changes:
+# 2018-10-09 (rja)
+# - migrated URL handling to addressable library
 # 2017-05-31 (rja)
 # - refactored get_posts_for_group and get_posts_for_user into get_posts
 # 2017-05-30 (rja)
@@ -59,6 +62,11 @@ module BibSonomy
 
       @conn.basic_auth(user_name, api_key)
 
+      # initialise URLs
+      @url_post = Addressable::Template.new("/api/users/{user_name}/posts/{intra_hash}?format={format}")
+      @url_posts = Addressable::Template.new("/api/posts{?format,resourcetype,start,end,user,group,tags}")
+
+      @url_doc = Addressable::Template.new("/api/users/{user_name}/posts/{intra_hash}/documents/{file_name}")
     end
 
 
@@ -69,7 +77,11 @@ module BibSonomy
     # @param intra_hash [String] the intrag hash of the post
     # @return [BibSonomy::Post, String] the requested post
     def get_post(user_name, intra_hash)
-      response = @conn.get "/api/users/" + CGI.escape(user_name) + "/posts/" + CGI.escape(intra_hash), { :format => @format }
+      response = @conn.get @url_post.expand({
+                                              :user_name => user_name,
+                                              :intra_hash => intra_hash,
+                                              :format => @format
+                                            })
 
       if @parse
         attributes = JSON.parse(response.body)
@@ -115,24 +127,24 @@ module BibSonomy
     # @param endc [Integer] number of last post to download
     # @return [Array<BibSonomy::Post>, String] the requested posts
     def get_posts(grouping, name, resource_type, tags = nil, start = 0, endc = $MAX_POSTS_PER_REQUEST)
-      params = {
-        :format => @format,
-        :resourcetype => get_resource_type(resource_type),
-        :start => start,
-        :end => endc
-      }
+      url = @url_posts.partial_expand({
+                                        :format => @format,
+                                        :resourcetype => get_resource_type(resource_type),
+                                        :start => start,
+                                        :end => endc
+                                      })
       # decide what to get
       if grouping == "user"
-        params[:user] = name
+        url = url.partial_expand({:user => name})
       elsif grouping == "group"
-        params[:group] = name
+        url = url.partial_expand({:group => name})
       end
       # add tags, if requested
       if tags != nil
-        params[:tags] = tags.join(" ")
+        url = url.partial_expand({:tags => tags.join(" ")})
       end
 
-      response = @conn.get "/api/posts", params
+      response = @conn.get url.expand({})
 
       if @parse
         posts = JSON.parse(response.body)["posts"]["post"]
@@ -143,7 +155,11 @@ module BibSonomy
 
 
     def get_document_href(user_name, intra_hash, file_name)
-      return "/api/users/" + CGI.escape(user_name) + "/posts/" + CGI.escape(intra_hash) + "/documents/" + CGI.escape(file_name)
+      return @url_doc.expand({
+                               :user_name => user_name,
+                               :intra_hash => intra_hash,
+                               :file_name => file_name
+                             })
     end
 
     #
