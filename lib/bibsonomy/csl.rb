@@ -16,10 +16,13 @@ require "bibsonomy/api"
 # - number of posts
 # - style
 # - directory
+# - pdf_link_prefix
 # - group
 # - altmetric
 #
 # Changes:
+# 2018-10-13
+# - added pdf_link_prefix
 # 2018-08-09 (rja)
 # - shortened DOI URL
 # 2017-07-05 (rja)
@@ -50,6 +53,9 @@ module BibSonomy
 
     # @return [String] the output directory for downloaded PDF files. If set to `nil`, no documents are downloaded. (default: `nil`)
     attr_accessor :pdf_dir
+
+    # @return [String] prefix of link to downloaded PDFs. E.g., to prepend a slash (default: ``)
+    attr_accessor :pdf_link_prefix
 
     # @return [String] the {http://citationstyles.org/ CSL} style used for rendering. (default: `apa.csl`)
     attr_accessor :style
@@ -98,6 +104,7 @@ module BibSonomy
       # setting some defaults
       @style = 'apa.csl'
       @pdf_dir = nil
+      @pdf_link_prefix = ''
       @css_class = 'publications'
       @year_headings = true
       @public_doc_postfix = '_oa.pdf'
@@ -182,7 +189,7 @@ module BibSonomy
           for doc in get_public_docs(post["documents"])
             # fileHash, fileName, md5hash, userName
             file_path = get_document(@bibsonomy, intra_hash, user_name, doc, @pdf_dir, file_names)
-            options << "<a href='#{file_path}'>PDF</a>"
+            options << "<a href='#{@pdf_link_prefix}#{file_path}'>PDF</a>"
           end
         end
         # attach DOI
@@ -335,6 +342,7 @@ module BibSonomy
   # @return [String] the rendered posts as HTML
   def self.main(args)
 
+    # TODO add "pdf_link_prefix" below
     # setting default options
     options = OpenStruct.new
     options.documents = false
