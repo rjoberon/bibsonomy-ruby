@@ -18,8 +18,8 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = '>= 2.2'
-  
+  spec.required_ruby_version = '>= 3.0'
+
   spec.add_development_dependency "bundler", "~> 1.8"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.4"
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "webmock", "~> 1.19"
   spec.add_development_dependency "coveralls", '~> 0.7'
   spec.add_development_dependency "simplecov", '~> 0.9'
-  
+
   spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "json", "~> 2.0"
   spec.add_dependency "citeproc", "~> 1.0", '>= 1.0.9'

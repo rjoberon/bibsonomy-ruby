@@ -310,7 +310,7 @@ module BibSonomy
       # produce file path
       file_path = dir + "/" + file_name
       # download PDF if it not already exists
-      if not File.exists? file_path
+      if not File.exist? file_path
         pdf, mime = bib.get_document(user_name, intra_hash, doc["fileName"])
         if pdf == nil
           warn "could not download file " + intra_hash + "/" + user_name + "/" + file_name
