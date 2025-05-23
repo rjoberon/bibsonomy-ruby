@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Wraps the BibSonomy REST API.}
   spec.description   = %q{Enables calls to the BibSonomy REST API with Ruby.}
   spec.homepage      = "https://github.com/rjoberon/bibsonomy-ruby"
-  spec.license       = "LGPL-2.1"
+  spec.license       = "LGPL-2.1-or-later"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -35,7 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "csl-styles", "~> 1.0"
   spec.add_dependency "csl", "~> 1.5"
   spec.add_dependency 'addressable', '~> 2.5'
-  # required by citeproc-ruby when Ruby version <= 2.4
-  spec.add_dependency "unicode", "~> 0.4", ">=0.4.4.4"
 
 end
