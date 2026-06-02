@@ -42,7 +42,7 @@ class BibSonomyPostTest < Minitest::Test
       result = @api.get_posts_for_group("iccs", "publication", ["test"], 0, 10)
 
       # Make sure we got all the posts
-      assert_equal 2, result.length
+      assert_equal 4, result.length
 
       # Make sure that the JSON was parsed
       assert result.kind_of?(Array)
@@ -68,7 +68,7 @@ class BibSonomyPostTest < Minitest::Test
       result = @api.get_posts("group", "iccs", "publication", ["test"], 0, 10)
 
       # Make sure we got all the posts
-      assert_equal 2, result.length
+      assert_equal 4, result.length
 
       # Make sure that the JSON was parsed
       assert result.kind_of?(Array)

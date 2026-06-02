@@ -20,13 +20,14 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 3.0'
 
-  spec.add_development_dependency "bundler", "~> 1.8"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "minitest", "~> 5.4"
-  spec.add_development_dependency "vcr", "~> 2.9"
-  spec.add_development_dependency "webmock", "~> 1.19"
+  spec.add_development_dependency "bundler", "~> 2.4"
+  spec.add_development_dependency "rake", "~> 13"
+  spec.add_development_dependency "minitest", "~> 6"
+  spec.add_development_dependency "vcr", "~> 6"
+  spec.add_development_dependency "webmock", "~> 3"
   spec.add_development_dependency "coveralls", '~> 0.7'
   spec.add_development_dependency "simplecov", '~> 0.9'
+  spec.add_development_dependency "base64", '~> 0.3'
 
   spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "json", "~> 2.0"

@@ -4,7 +4,7 @@ class BibSonomyCSLTest < Minitest::Test
 
   def setup
     # create directory for documents
-    Dir.mkdir 'docs' unless File.exists?('docs')
+    Dir.mkdir 'docs' unless File.exist?('docs')
     @csl = BibSonomy::CSL.new(ENV['BIBSONOMY_USER_NAME'], ENV['BIBSONOMY_API_KEY'])
   end
 
@@ -26,7 +26,7 @@ class BibSonomyCSLTest < Minitest::Test
       html = @csl.render("user", "bibsonomy-ruby", [], 10)
 
       assert_equal "<h3>2015</h3>", html[0..12]
-      assert_equal "<h3>2010</h3>", html[765..777]
+      assert_equal "<h3>2010</h3>", html[728..740]
       assert_equal "</ul>", html[-6..-2]
     end
   end
@@ -44,7 +44,7 @@ class BibSonomyCSLTest < Minitest::Test
       # DOI is a URL
       html = @csl.render("user", "bibsonomy-ruby", ["brokendoi", "test"], 10)
       # thus we have http not https
-      assert_equal "DOI:<a href='http://dx.doi.org/10.1145/2786451.2786927'>10.1145/2786451.2786927</a>", html[374,83]
+      assert_equal "DOI:<a href='http://dx.doi.org/10.1145/2786451.2786927'>10.1145/2786451.2786927</a>", html[337,83]
     end
   end
 
